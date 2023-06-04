@@ -2,9 +2,9 @@
 # Выписки хранятся в папке ЕГРН текущего каталога
 # В результате создает таблицу в указанной папке и открывает ее.
 # Исходная таблица должна быть .xlsx и содержать 2 колонки:
-# id	Кадастровыйномер
-# ---------------------------------
-# 12    42:30:0501005:113
+# id	Кадастровыйномер    Видправа    Землепользователь
+# ---------------------------------------------------------
+# 12    42:30:0501005:113   аренда       Иванов Иван Иванович
 #
 import os
 import random
@@ -70,7 +70,8 @@ table_output = openpyxl.Workbook()
 sheet_table_output = table_output.active
 
 # Создаем заголовки в результирующей таблице
-sheet_table_output.append(('id', 'КадастровыйНомерЗУ', "ВидПрава", "Землепользователь", "ДатаИзменения"))
+sheet_table_output.append(('id', 'КадастровыйНомерЗУ', "ВидПраваMapinfo", "ЗемлепользовательMapinfo",
+                           "ВидПраваЕГРН", "ЗемлепользовательЕГРН", "ДатаИзменения"))
 max_row = sheet.max_row
 current_date = datetime.datetime.now()
 
@@ -80,6 +81,8 @@ for i in range(2, max_row):
     list_right_types = []
     id = sheet[i][0].value
     cadnum = str(sheet[i][1].value)
+    right_type_mapinfo = str(sheet[i][2].value)
+    right_holder_mapinfo = str(sheet[i][3].value)
     print(cadnum)
     file_name = getFilename(cadnum)
     if file_name:
@@ -94,6 +97,8 @@ for i in range(2, max_row):
     object = []
     object.append(id)
     object.append(cadnum)
+    object.append(right_type_mapinfo)
+    object.append(right_holder_mapinfo)
     if list_right_holders:
         object.append(list_right_types)
     else:
