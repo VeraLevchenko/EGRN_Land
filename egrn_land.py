@@ -1,11 +1,11 @@
 # Программа возвращает правообладателя зу из выписки ЕГРН и вид права
 # Выписки хранятся в папке ЕГРН текущего каталога
 # В результате создает таблицу в указанной папке и открывает ее.
-# Исходная таблица должна быть .xlsx и содержать 2 колонки:
-# id	Кадастровыйномер    Видправа    Землепользователь
+# Исходная таблица должна быть .xlsx и содержать 4 колонки:
+# id	Тип	  НаимУлицы  	Дом	    КадастровыйНомерЗУ
 # ---------------------------------------------------------
-# 12    42:30:0501005:113   аренда       Иванов Иван Иванович
-#
+# 12    улица Кирова         71     42:30:0501005:113
+# #
 import os
 import random
 import openpyxl
@@ -26,6 +26,7 @@ def get_file_list(path_Data):
 def getFilename(cadnum):
     file_egrn = []
     path_Data = os.path.abspath(os.curdir) + "\ЕГРН"
+    print(path_Data)
     filelist = get_file_list(path_Data)
     cadnum = cadnum.replace(":", "_")
     for file in filelist:
@@ -70,8 +71,8 @@ table_output = openpyxl.Workbook()
 sheet_table_output = table_output.active
 
 # Создаем заголовки в результирующей таблице
-sheet_table_output.append(('id', 'КадастровыйНомерЗУ', "ВидПраваMapinfo", "ЗемлепользовательMapinfo",
-                           "ВидПраваЕГРН", "ЗемлепользовательЕГРН", "ДатаИзменения"))
+sheet_table_output.append(('id', 'Тип', "НаимУлицы", "Дом",
+                           "КадастровыйНомерЗУ", "ВидПраваЕГРН", "Землепользователь"))
 max_row = sheet.max_row
 current_date = datetime.datetime.now()
 
@@ -80,9 +81,12 @@ for i in range(2, max_row):
     list_right_holders = []
     list_right_types = []
     id = sheet[i][0].value
-    cadnum = str(sheet[i][1].value)
-    right_type_mapinfo = str(sheet[i][2].value)
-    right_holder_mapinfo = str(sheet[i][3].value)
+    type_street = sheet[i][1].value
+    street = sheet[i][2].value
+    house = sheet[i][3].value
+    cadnum = str(sheet[i][4].value)
+    # right_type_mapinfo = str(sheet[i][2].value)
+    # right_holder_mapinfo = str(sheet[i][3].value)
     print(cadnum)
     file_name = getFilename(cadnum)
     if file_name:
@@ -96,9 +100,11 @@ for i in range(2, max_row):
     # Заполняем строку данными
     object = []
     object.append(id)
-    object.append(cadnum)
-    object.append(right_type_mapinfo)
-    object.append(right_holder_mapinfo)
+    object.append(type_street)
+    object.append(street)
+    object.append(house)
+    # object.append(right_type_mapinfo)
+    # object.append(right_holder_mapinfo)
     if list_right_holders:
         object.append(list_right_types)
     else:
